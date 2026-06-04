@@ -85,21 +85,28 @@ export default async function PraiasPage() {
           ))}
         </div>
 
-        {/* Slots de patrocinadores */}
-        <div className="mt-10">
-          <p className="text-xs text-gray-600 uppercase tracking-widest mb-4">Apoiadores</p>
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-3">
-            {Array.from({ length: 7 }).map((_, i) => (
-              <Link
-                key={i}
-                href="/patrocinadores"
-                className="bg-[#0D1526] border border-white/5 hover:border-[#1B6EF3]/30 rounded-xl aspect-square flex items-center justify-center transition-all group"
-              >
-                <span className="text-[10px] text-gray-700 group-hover:text-[#1B6EF3] text-center px-1 leading-tight">
-                  ANUNCIE AQUI
-                </span>
-              </Link>
-            ))}
+        {/* Redes Sociais */}
+        <div className="mt-12 bg-[#0D1526] border border-white/5 rounded-2xl p-8">
+          <p className="text-xs text-gray-600 uppercase tracking-widest mb-6">Siga-nos</p>
+          <div className="flex gap-4 items-center">
+            <a
+              href="https://youtube.com/@noclickcerto"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-4 py-2 bg-[#1B6EF3]/10 hover:bg-[#1B6EF3]/20 border border-[#1B6EF3]/30 rounded-lg transition-all group"
+            >
+              <span className="text-lg">▶️</span>
+              <span className="text-sm font-semibold text-[#1B6EF3] group-hover:text-white">YouTube</span>
+            </a>
+            <a
+              href="https://instagram.com/noclickcerto"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-4 py-2 bg-[#1B6EF3]/10 hover:bg-[#1B6EF3]/20 border border-[#1B6EF3]/30 rounded-lg transition-all group"
+            >
+              <span className="text-lg">📷</span>
+              <span className="text-sm font-semibold text-[#1B6EF3] group-hover:text-white">Instagram</span>
+            </a>
           </div>
         </div>
       </div>
@@ -143,6 +150,24 @@ function CameraCard({ camera }: { camera: { id: string; name: string; status: st
         {camera.description && (
           <p className="text-xs text-gray-600 mt-0.5 truncate">{camera.description}</p>
         )}
+      </div>
+
+      {/* Patrocinadores da câmera */}
+      <div className="border-t border-white/5 px-3 py-2">
+        <p className="text-[10px] text-gray-600 uppercase tracking-widest mb-2">Apoiadores</p>
+        <div className="grid grid-cols-3 gap-1.5">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Link
+              key={i}
+              href="/patrocinadores"
+              className="aspect-square bg-[#0D1526]/50 border border-white/5 hover:border-[#1B6EF3]/20 rounded-lg flex items-center justify-center transition-all group/sponsor"
+            >
+              <span className="text-[9px] text-gray-700 group-hover/sponsor:text-[#1B6EF3] text-center px-0.5 leading-tight">
+                ANUNCIE
+              </span>
+            </Link>
+          ))}
+        </div>
       </div>
     </div>
   )
