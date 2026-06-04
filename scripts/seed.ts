@@ -116,8 +116,10 @@ async function seed() {
       await db.insert(cameras).values({
         locationId: location[0].id,
         name: cameraName,
+        rtspUrl: `rtsp://camera-${cameraName.toLowerCase().replace(/\s+/g, '-')}.ubatuba.local/stream`,
         status: 'offline',
         description: `Câmera ao vivo de ${cameraName}`,
+        isPublic: true,
       })
     }
   }
