@@ -8,17 +8,22 @@ export const dynamic = 'force-dynamic'
 export const revalidate = 60
 
 async function getBeachesWithCameras() {
-  const allBeaches = await db.select().from(beaches).orderBy(beaches.name)
-  const allLocations = await db.select().from(locations)
-  const allCameras = await db.select().from(cameras)
+  try {
+    const allBeaches = await db.select().from(beaches).orderBy(beaches.name)
+    const allLocations = await db.select().from(locations)
+    const allCameras = await db.select().from(cameras)
 
-  return allBeaches.map(beach => {
-    const beachLocations = allLocations.filter(l => l.beachId === beach.id)
-    const beachCameras = allCameras.filter(c =>
-      beachLocations.some(l => l.id === c.locationId)
-    )
-    return { ...beach, cameras: beachCameras }
-  })
+    return allBeaches.map(beach => {
+      const beachLocations = allLocations.filter(l => l.beachId === beach.id)
+      const beachCameras = allCameras.filter(c =>
+        beachLocations.some(l => l.id === c.locationId)
+      )
+      return { ...beach, cameras: beachCameras }
+    })
+  } catch (error) {
+    console.error('Error fetching beaches data:', error)
+    return []
+  }
 }
 
 export default async function PraiasPage() {
