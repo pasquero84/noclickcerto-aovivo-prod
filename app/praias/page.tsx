@@ -4,6 +4,7 @@ import { beaches, cameras, locations } from '@/lib/db/schema'
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 
+export const dynamic = 'force-dynamic'
 export const revalidate = 60
 
 async function getBeachesWithCameras() {
