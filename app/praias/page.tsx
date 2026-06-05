@@ -122,21 +122,62 @@ export default async function PraiasPage() {
 function CameraCard({ camera }: { camera: { id: string; name: string; status: string; description: string | null } }) {
   const isOnline = camera.status === 'online'
 
+  // Mapear câmeras de Ubatuba para imagens WavesNow (provisório)
+  const getWavesNowImage = (cameraName: string): string | null => {
+    const nameUpper = cameraName.toUpperCase()
+
+    if (nameUpper.includes('ITAMAMBUCA')) {
+      return 'https://wavesnow.sfo3.cdn.digitaloceanspaces.com/cameras/itamambuca1.png'
+    }
+    if (nameUpper.includes('VERMELHA') && nameUpper.includes('CENTRO')) {
+      return 'https://wavesnow.sfo3.cdn.digitaloceanspaces.com/cameras/vermelha-centro0.png'
+    }
+    if (nameUpper.includes('PEREQUÊ') || nameUpper.includes('PEREQUE')) {
+      return 'https://wavesnow.sfo3.cdn.digitaloceanspaces.com/cameras/pereque-acu.png'
+    }
+    if (nameUpper.includes('PRAIA GRANDE')) {
+      return 'https://wavesnow.sfo3.cdn.digitaloceanspaces.com/cameras/praia-grande2.png'
+    }
+    // A Preferida e Toninhas não têm imagens no WavesNow ainda
+    return null
+  }
+
+  const cameraImage = getWavesNowImage(camera.name)
+
   return (
     <div className="bg-[#060A14] rounded-xl border border-white/5 overflow-hidden group hover:border-[#1B6EF3]/30 transition-all">
-      {/* Thumbnail simulado */}
-      <div className="aspect-video relative flex items-center justify-center bg-gradient-to-br from-[#0D1526] to-[#060A14]">
-        {isOnline ? (
-          <div className="text-center">
-            <div className="text-4xl mb-2">🌊</div>
-            <p className="text-xs text-gray-500">Ao vivo</p>
-          </div>
+      {/* Thumbnail */}
+      <div className="aspect-video relative flex items-center justify-center bg-gradient-to-br from-[#0D1526] to-[#060A14] overflow-hidden">
+        {cameraImage ? (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={cameraImage}
+              alt={camera.name}
+              className="w-full h-full object-cover"
+            />
+            {/* Overlay gradient para melhor contraste com badge */}
+            <div className="absolute inset-0 bg-black/20 pointer-events-none" />
+            {/* Crédito WavesNow */}
+            <div className="absolute bottom-1 right-1 text-[9px] text-white/60 bg-black/50 px-1.5 py-0.5 rounded">
+              WavesNow
+            </div>
+          </>
         ) : (
-          <div className="text-center">
-            <div className="text-4xl mb-2 opacity-30">📷</div>
-            <p className="text-xs text-gray-600">Câmera offline</p>
-            <p className="text-[10px] text-gray-700 mt-1">Em instalação</p>
-          </div>
+          <>
+            {isOnline ? (
+              <div className="text-center">
+                <div className="text-4xl mb-2">🌊</div>
+                <p className="text-xs text-gray-500">Ao vivo</p>
+              </div>
+            ) : (
+              <div className="text-center">
+                <div className="text-4xl mb-2 opacity-30">📷</div>
+                <p className="text-xs text-gray-600">Câmera offline</p>
+                <p className="text-[10px] text-gray-700 mt-1">Em instalação</p>
+              </div>
+            )}
+          </>
         )}
 
         {/* Badge status */}
