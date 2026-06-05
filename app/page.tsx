@@ -1,6 +1,9 @@
-import { redirect } from 'next/navigation'
+import CamerasView from '@/components/CamerasView'
+
+export const dynamic = 'force-dynamic'
+export const revalidate = 60
 
 // AO VIVO = página única das câmeras das praias
 export default function Home() {
-  redirect('/praias')
+  return <CamerasView />
 }
