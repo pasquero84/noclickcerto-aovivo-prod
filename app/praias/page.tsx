@@ -1,5 +1,4 @@
-import { db } from '@/lib/db'
-import { beaches, cameras, locations } from '@/lib/db/schema'
+import { supabase } from '@/lib/supabase'
 
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
@@ -7,22 +6,38 @@ import Navbar from '@/components/Navbar'
 export const dynamic = 'force-dynamic'
 export const revalidate = 60
 
+type BeachRow = { id: string; name: string; description: string | null }
+type LocationRow = { id: string; beach_id: string }
+type CameraRow = {
+  id: string
+  location_id: string
+  name: string
+  status: string
+  description: string | null
+}
+
 async function getBeachesWithCameras() {
   try {
-    console.log('🏖️  Fetching beaches...')
-    const allBeaches = await db.select().from(beaches).orderBy(beaches.name)
-    console.log('✅ Beaches:', allBeaches.length)
+    const [beachesRes, locationsRes, camerasRes] = await Promise.all([
+      supabase.from('beaches').select('id,name,description').order('name'),
+      supabase.from('locations').select('id,beach_id'),
+      supabase.from('cameras').select('id,location_id,name,status,description'),
+    ])
 
-    const allLocations = await db.select().from(locations)
-    console.log('✅ Locations:', allLocations.length)
+    if (beachesRes.error) throw beachesRes.error
+    if (locationsRes.error) throw locationsRes.error
+    if (camerasRes.error) throw camerasRes.error
 
-    const allCameras = await db.select().from(cameras)
-    console.log('✅ Cameras:', allCameras.length)
+    const allBeaches = (beachesRes.data ?? []) as BeachRow[]
+    const allLocations = (locationsRes.data ?? []) as LocationRow[]
+    const allCameras = (camerasRes.data ?? []) as CameraRow[]
 
     return allBeaches.map(beach => {
-      const beachLocations = allLocations.filter(l => l.beachId === beach.id)
+      const beachLocationIds = allLocations
+        .filter(l => l.beach_id === beach.id)
+        .map(l => l.id)
       const beachCameras = allCameras.filter(c =>
-        beachLocations.some(l => l.id === c.locationId)
+        beachLocationIds.includes(c.location_id)
       )
       return { ...beach, cameras: beachCameras }
     })
