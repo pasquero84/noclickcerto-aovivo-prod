@@ -9,9 +9,15 @@ export const revalidate = 60
 
 async function getBeachesWithCameras() {
   try {
+    console.log('🏖️  Fetching beaches...')
     const allBeaches = await db.select().from(beaches).orderBy(beaches.name)
+    console.log('✅ Beaches:', allBeaches.length)
+
     const allLocations = await db.select().from(locations)
+    console.log('✅ Locations:', allLocations.length)
+
     const allCameras = await db.select().from(cameras)
+    console.log('✅ Cameras:', allCameras.length)
 
     return allBeaches.map(beach => {
       const beachLocations = allLocations.filter(l => l.beachId === beach.id)
@@ -21,7 +27,7 @@ async function getBeachesWithCameras() {
       return { ...beach, cameras: beachCameras }
     })
   } catch (error) {
-    console.error('Error fetching beaches data:', error)
+    console.error('❌ Error fetching beaches data:', error)
     return []
   }
 }
