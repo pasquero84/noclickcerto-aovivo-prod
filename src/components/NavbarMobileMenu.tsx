@@ -6,12 +6,8 @@ import { signOut } from 'next-auth/react'
 import type { Session } from 'next-auth'
 
 const links = [
-  { href: '/', label: 'AO VIVO' },
-  { href: '/boletim', label: 'BOLETIM' },
-  { href: '/praias', label: 'PRAIAS' },
-  { href: '/videos', label: 'VÍDEOS' },
+  { href: '/praias', label: 'AO VIVO' },
   { href: '/premium', label: 'PREMIUM' },
-  { href: '/sobre', label: 'SOBRE' },
 ]
 
 export default function NavbarMobileMenu({ session }: { session: Session | null }) {

@@ -2,6 +2,7 @@ import { supabase } from '@/lib/supabase'
 
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
+import CameraGrid from '@/components/CameraGrid'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 60
@@ -77,39 +78,8 @@ export default async function PraiasPage() {
           </Link>
         </div>
 
-        {/* Grid de praias */}
-        <div className="grid gap-6">
-          {beachesData.map(beach => (
-            <div key={beach.id} className="bg-[#0D1526] rounded-2xl border border-white/5 overflow-hidden">
-              {/* Header da praia */}
-              <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between">
-                <div>
-                  <h2 className="font-bold text-lg">{beach.name}</h2>
-                  {beach.description && (
-                    <p className="text-sm text-gray-500">{beach.description}</p>
-                  )}
-                </div>
-                <span className="text-xs text-gray-500 bg-white/5 px-2 py-1 rounded-full">
-                  {beach.cameras.length} câmera{beach.cameras.length !== 1 ? 's' : ''}
-                </span>
-              </div>
-
-              {/* Câmeras da praia */}
-              <div className="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {beach.cameras.length === 0 ? (
-                  <div className="col-span-full text-center py-8 text-gray-600">
-                    <p className="text-3xl mb-2">🎥</p>
-                    <p className="text-sm">Câmera em breve</p>
-                  </div>
-                ) : (
-                  beach.cameras.map(camera => (
-                    <CameraCard key={camera.id} camera={camera} />
-                  ))
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
+        {/* Grid de praias + modal de zoom */}
+        <CameraGrid beaches={beachesData} />
 
         {/* Redes Sociais */}
         <div className="mt-12 bg-[#0D1526] border border-white/5 rounded-2xl p-8">
@@ -135,84 +105,6 @@ export default async function PraiasPage() {
             </a>
           </div>
         </div>
-      </div>
-    </div>
-  )
-}
-
-function CameraCard({ camera }: { camera: { id: string; name: string; status: string; description: string | null } }) {
-  const isOnline = camera.status === 'online'
-
-  // Mapear câmeras de Ubatuba para imagens WavesNow (provisório)
-  const getWavesNowImage = (cameraName: string): string | null => {
-    const nameUpper = cameraName.toUpperCase()
-
-    if (nameUpper.includes('ITAMAMBUCA')) {
-      return 'https://wavesnow.sfo3.cdn.digitaloceanspaces.com/cameras/itamambuca1.png'
-    }
-    if (nameUpper.includes('VERMELHA') && nameUpper.includes('CENTRO')) {
-      return 'https://wavesnow.sfo3.cdn.digitaloceanspaces.com/cameras/vermelha-centro0.png'
-    }
-    if (nameUpper.includes('PEREQUÊ') || nameUpper.includes('PEREQUE')) {
-      return 'https://wavesnow.sfo3.cdn.digitaloceanspaces.com/cameras/pereque-acu.png'
-    }
-    if (nameUpper.includes('PRAIA GRANDE')) {
-      return 'https://wavesnow.sfo3.cdn.digitaloceanspaces.com/cameras/praia-grande2.png'
-    }
-    // "A Preferida do Lado Norte" = Praia Vermelha do Norte no WavesNow
-    if (nameUpper.includes('PREFERIDA') || nameUpper.includes('LADO NORTE')) {
-      return 'https://wavesnow.sfo3.cdn.digitaloceanspaces.com/cameras/vermelha-norte2.png'
-    }
-    // Toninhas não tem imagem no WavesNow ainda
-    return null
-  }
-
-  const cameraImage = getWavesNowImage(camera.name)
-
-  return (
-    <div className="bg-[#060A14] rounded-xl border border-white/5 overflow-hidden group hover:border-[#1B6EF3]/30 transition-all">
-      {/* Thumbnail */}
-      <div className="aspect-video relative flex items-center justify-center bg-gradient-to-br from-[#0D1526] to-[#060A14] overflow-hidden">
-        {cameraImage ? (
-          <>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={cameraImage}
-              alt={camera.name}
-              className="w-full h-full object-cover"
-            />
-          </>
-        ) : (
-          <>
-            {isOnline ? (
-              <div className="text-center">
-                <div className="text-4xl mb-2">🌊</div>
-                <p className="text-xs text-gray-500">Ao vivo</p>
-              </div>
-            ) : (
-              <div className="text-center">
-                <div className="text-4xl mb-2 opacity-30">📷</div>
-                <p className="text-xs text-gray-600">Câmera offline</p>
-                <p className="text-[10px] text-gray-700 mt-1">Em instalação</p>
-              </div>
-            )}
-          </>
-        )}
-
-        {/* Badge status — apenas nas câmeras sem imagem (em instalação) */}
-        {!cameraImage && (
-          <div className="absolute top-2 left-2 flex items-center gap-1.5 px-2 py-1 rounded-full text-[10px] font-semibold bg-yellow-500/20 text-yellow-500">
-            <span className="w-1.5 h-1.5 rounded-full bg-yellow-500" />
-            EM BREVE
-          </div>
-        )}
-      </div>
-
-      <div className="p-3">
-        <p className="text-sm font-medium text-white truncate">{camera.name}</p>
-        {camera.description && (
-          <p className="text-xs text-gray-600 mt-0.5 truncate">{camera.description}</p>
-        )}
       </div>
     </div>
   )

@@ -5,12 +5,8 @@ import NavbarClient from './NavbarClient'
 import NavbarMobileMenu from './NavbarMobileMenu'
 
 const links = [
-  { href: '/', label: 'AO VIVO' },
-  { href: '/boletim', label: 'BOLETIM' },
-  { href: '/praias', label: 'PRAIAS' },
-  { href: '/videos', label: 'VÍDEOS' },
+  { href: '/praias', label: 'AO VIVO' },
   { href: '/premium', label: 'PREMIUM' },
-  { href: '/sobre', label: 'SOBRE' },
 ]
 
 export default async function Navbar() {
