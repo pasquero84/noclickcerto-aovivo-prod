@@ -164,6 +164,8 @@ function CameraCard({ camera }: { camera: { id: string; name: string; status: st
   }
 
   const cameraImage = getWavesNowImage(camera.name)
+  // Câmeras com imagem WavesNow são exibidas como "AO VIVO"
+  const showAsLive = isOnline || cameraImage !== null
 
   return (
     <div className="bg-[#060A14] rounded-xl border border-white/5 overflow-hidden group hover:border-[#1B6EF3]/30 transition-all">
@@ -203,12 +205,12 @@ function CameraCard({ camera }: { camera: { id: string; name: string; status: st
 
         {/* Badge status */}
         <div className={`absolute top-2 left-2 flex items-center gap-1.5 px-2 py-1 rounded-full text-[10px] font-semibold ${
-          isOnline
+          showAsLive
             ? 'bg-green-500/20 text-green-400'
             : 'bg-yellow-500/20 text-yellow-500'
         }`}>
-          <span className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-green-400 animate-pulse' : 'bg-yellow-500'}`} />
-          {isOnline ? 'AO VIVO' : 'EM BREVE'}
+          <span className={`w-1.5 h-1.5 rounded-full ${showAsLive ? 'bg-green-400 animate-pulse' : 'bg-yellow-500'}`} />
+          {showAsLive ? 'AO VIVO' : 'EM BREVE'}
         </div>
       </div>
 
