@@ -1,9 +1,11 @@
 import { drizzle } from 'drizzle-orm/postgres-js'
 import postgres from 'postgres'
 
-if (!process.env.DATABASE_URL) {
-  throw new Error('DATABASE_URL environment variable is required')
+const databaseUrl = process.env.DIRECT_URL || process.env.DATABASE_URL
+
+if (!databaseUrl) {
+  throw new Error('DATABASE_URL or DIRECT_URL environment variable is required')
 }
 
-const client = postgres(process.env.DATABASE_URL)
+const client = postgres(databaseUrl)
 export const db = drizzle(client)
