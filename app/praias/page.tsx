@@ -159,13 +159,15 @@ function CameraCard({ camera }: { camera: { id: string; name: string; status: st
     if (nameUpper.includes('PRAIA GRANDE')) {
       return 'https://wavesnow.sfo3.cdn.digitaloceanspaces.com/cameras/praia-grande2.png'
     }
-    // A Preferida e Toninhas não têm imagens no WavesNow ainda
+    // "A Preferida do Lado Norte" = Praia Vermelha do Norte no WavesNow
+    if (nameUpper.includes('PREFERIDA') || nameUpper.includes('LADO NORTE')) {
+      return 'https://wavesnow.sfo3.cdn.digitaloceanspaces.com/cameras/vermelha-norte2.png'
+    }
+    // Toninhas não tem imagem no WavesNow ainda
     return null
   }
 
   const cameraImage = getWavesNowImage(camera.name)
-  // Câmeras com imagem WavesNow são exibidas como "AO VIVO"
-  const showAsLive = isOnline || cameraImage !== null
 
   return (
     <div className="bg-[#060A14] rounded-xl border border-white/5 overflow-hidden group hover:border-[#1B6EF3]/30 transition-all">
@@ -179,12 +181,6 @@ function CameraCard({ camera }: { camera: { id: string; name: string; status: st
               alt={camera.name}
               className="w-full h-full object-cover"
             />
-            {/* Overlay gradient para melhor contraste com badge */}
-            <div className="absolute inset-0 bg-black/20 pointer-events-none" />
-            {/* Crédito WavesNow */}
-            <div className="absolute bottom-1 right-1 text-[9px] text-white/60 bg-black/50 px-1.5 py-0.5 rounded">
-              WavesNow
-            </div>
           </>
         ) : (
           <>
@@ -203,15 +199,13 @@ function CameraCard({ camera }: { camera: { id: string; name: string; status: st
           </>
         )}
 
-        {/* Badge status */}
-        <div className={`absolute top-2 left-2 flex items-center gap-1.5 px-2 py-1 rounded-full text-[10px] font-semibold ${
-          showAsLive
-            ? 'bg-green-500/20 text-green-400'
-            : 'bg-yellow-500/20 text-yellow-500'
-        }`}>
-          <span className={`w-1.5 h-1.5 rounded-full ${showAsLive ? 'bg-green-400 animate-pulse' : 'bg-yellow-500'}`} />
-          {showAsLive ? 'AO VIVO' : 'EM BREVE'}
-        </div>
+        {/* Badge status — apenas nas câmeras sem imagem (em instalação) */}
+        {!cameraImage && (
+          <div className="absolute top-2 left-2 flex items-center gap-1.5 px-2 py-1 rounded-full text-[10px] font-semibold bg-yellow-500/20 text-yellow-500">
+            <span className="w-1.5 h-1.5 rounded-full bg-yellow-500" />
+            EM BREVE
+          </div>
+        )}
       </div>
 
       <div className="p-3">
@@ -219,24 +213,6 @@ function CameraCard({ camera }: { camera: { id: string; name: string; status: st
         {camera.description && (
           <p className="text-xs text-gray-600 mt-0.5 truncate">{camera.description}</p>
         )}
-      </div>
-
-      {/* Patrocinadores da câmera */}
-      <div className="border-t border-white/5 px-3 py-2">
-        <p className="text-[10px] text-gray-600 uppercase tracking-widest mb-2">Apoiadores</p>
-        <div className="grid grid-cols-3 gap-1.5">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <Link
-              key={i}
-              href="/patrocinadores"
-              className="aspect-square bg-[#0D1526]/50 border border-white/5 hover:border-[#1B6EF3]/20 rounded-lg flex items-center justify-center transition-all group/sponsor"
-            >
-              <span className="text-[9px] text-gray-700 group-hover/sponsor:text-[#1B6EF3] text-center px-0.5 leading-tight">
-                ANUNCIE
-              </span>
-            </Link>
-          ))}
-        </div>
       </div>
     </div>
   )
