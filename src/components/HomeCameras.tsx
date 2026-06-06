@@ -8,6 +8,18 @@ export type FlatCamera = {
   main: string
   sub: string
   viewers: number
+  lat?: number
+  lng?: number
+}
+
+type Cond = {
+  waveHeight: number
+  wavePeriod: number
+  waveDir: string
+  windSpeed: number
+  windDir: string
+  temp: number
+  tide: string
 }
 
 // Thumbnail (print WavesNow) por câmera
@@ -42,6 +54,7 @@ export default function HomeCameras({
   const [selected, setSelected] = useState<FlatCamera | null>(null)
   const [favs, setFavs] = useState<Set<string>>(new Set(favoriteIds))
   const [onlyFavs, setOnlyFavs] = useState(false)
+  const [cond, setCond] = useState<Cond | null>(null)
 
   useEffect(() => {
     if (!selected) return
@@ -54,6 +67,17 @@ export default function HomeCameras({
       window.removeEventListener('keydown', onKey)
       document.body.style.overflow = ''
     }
+  }, [selected])
+
+  // Busca condições reais da praia ao abrir o modal
+  useEffect(() => {
+    setCond(null)
+    if (!selected) return
+    const q = selected.lat && selected.lng ? `?lat=${selected.lat}&lng=${selected.lng}` : ''
+    fetch(`/api/conditions${q}`)
+      .then(r => (r.ok ? r.json() : null))
+      .then(d => d && d.waveHeight !== undefined && setCond(d))
+      .catch(() => {})
   }, [selected])
 
   async function toggleFav(e: React.MouseEvent, cameraId: string) {
@@ -186,10 +210,27 @@ export default function HomeCameras({
                   AO VIVO
                 </span>
               </div>
+
+              {/* Condições reais da praia */}
+              <div className="px-5 pb-4 grid grid-cols-4 gap-2">
+                <Mini label="Ondas" value={cond ? `${cond.waveHeight}m` : '…'} />
+                <Mini label="Período" value={cond ? `${cond.wavePeriod}s` : '…'} />
+                <Mini label="Vento" value={cond ? `${cond.windDir} ${cond.windSpeed}` : '…'} />
+                <Mini label="Maré" value={cond ? cond.tide : '…'} />
+              </div>
             </div>
           </div>
         </div>
       )}
     </>
+  )
+}
+
+function Mini({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="bg-black/30 rounded-lg py-2 text-center">
+      <p className="text-sm font-bold text-white leading-none">{value}</p>
+      <p className="text-[9px] text-gray-500 uppercase tracking-wider mt-1">{label}</p>
+    </div>
   )
 }

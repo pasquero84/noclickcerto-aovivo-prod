@@ -56,6 +56,8 @@ export default async function Home() {
         main,
         sub,
         viewers: VIEWERS[cameras.length % VIEWERS.length],
+        lat: beach.latitude ? parseFloat(beach.latitude) : undefined,
+        lng: beach.longitude ? parseFloat(beach.longitude) : undefined,
       })
     }
   }

@@ -1,6 +1,12 @@
 import { supabase } from '@/lib/supabase'
 
-type BeachRow = { id: string; name: string; description: string | null }
+type BeachRow = {
+  id: string
+  name: string
+  description: string | null
+  latitude: string | null
+  longitude: string | null
+}
 type LocationRow = { id: string; beach_id: string }
 type CameraRow = {
   id: string
@@ -14,6 +20,8 @@ export type BeachWithCameras = {
   id: string
   name: string
   description: string | null
+  latitude: string | null
+  longitude: string | null
   cameras: {
     id: string
     name: string
@@ -25,7 +33,7 @@ export type BeachWithCameras = {
 export async function getBeachesWithCameras(): Promise<BeachWithCameras[]> {
   try {
     const [beachesRes, locationsRes, camerasRes] = await Promise.all([
-      supabase.from('beaches').select('id,name,description').order('name'),
+      supabase.from('beaches').select('id,name,description,latitude,longitude').order('name'),
       supabase.from('locations').select('id,beach_id'),
       supabase.from('cameras').select('id,location_id,name,status,description'),
     ])
