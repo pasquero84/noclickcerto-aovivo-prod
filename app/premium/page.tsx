@@ -34,7 +34,10 @@ export default function PremiumPage() {
             O surf de Ubatuba<br />em tempo real
           </h1>
           <p className="text-gray-400 text-lg max-w-xl mx-auto">
-            Câmeras em 1080p, replay completo e atualizações ao vivo. Para quem leva o surf a sério.
+            Todas as praias de Ubatuba ao vivo, replay e alertas de ondas — por uma fração do preço dos apps nacionais.
+          </p>
+          <p className="text-green-400 text-sm font-semibold mt-4">
+            ✓ 7 dias grátis · cancele quando quiser
           </p>
         </div>
 
@@ -113,7 +116,7 @@ export default function PremiumPage() {
         {/* FAQ simples */}
         <div className="bg-[#0D1526] rounded-2xl border border-white/5 divide-y divide-white/5">
           {[
-            ['Quando as câmeras estarão online?', 'A primeira câmera (Itamambuca - Canto Direito) está sendo instalada. O lançamento depende dos apoios e patrocínios confirmados.'],
+            ['As câmeras são ao vivo?', 'Sim. Estamos transmitindo as principais praias de Ubatuba ao vivo. Câmeras próprias em alta definição estão sendo instaladas ponto a ponto.'],
             ['Posso cancelar a qualquer momento?', 'Sim. Sem multa, sem complicação. Você continua com acesso até o fim do período pago.'],
             ['Como é feito o pagamento?', 'Via Mercado Pago — PIX, cartão de crédito ou boleto.'],
             ['O plano gratuito vai continuar?', 'Sim, para sempre. Apenas recursos avançados são Premium.'],
