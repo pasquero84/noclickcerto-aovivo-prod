@@ -134,12 +134,17 @@ export default function CheckoutForm() {
               <span className="text-2xl font-black">{current.price}</span>
             </div>
 
+            <div className="bg-green-500/10 border border-green-500/30 rounded-lg py-2 px-3 mb-3 text-center">
+              <p className="text-green-400 text-sm font-bold">🎁 15 dias grátis</p>
+              <p className="text-[10px] text-gray-400">Você só será cobrado depois de {current.price.replace('R$ ', 'R$')}</p>
+            </div>
+
             <button
               onClick={handlePay}
               disabled={loading}
               className="w-full bg-[#1B6EF3] hover:bg-blue-500 disabled:opacity-60 text-white font-black py-3.5 rounded-xl transition-colors"
             >
-              {loading ? 'Processando…' : 'Pagar e assinar'}
+              {loading ? 'Processando…' : 'Começar 15 dias grátis'}
             </button>
 
             {msg && (

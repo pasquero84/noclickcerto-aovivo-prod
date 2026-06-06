@@ -37,7 +37,7 @@ export default function PremiumPage() {
             Todas as praias de Ubatuba ao vivo, replay e alertas de ondas — por uma fração do preço dos apps nacionais.
           </p>
           <p className="text-green-400 text-sm font-semibold mt-4">
-            ✓ 7 dias grátis · cancele quando quiser
+            ✓ 15 dias grátis · cancele quando quiser
           </p>
         </div>
 
@@ -100,11 +100,16 @@ export default function PremiumPage() {
               ))}
             </ul>
 
+            <div className="bg-green-500/10 border border-green-500/30 rounded-lg py-2 px-3 mb-3 text-center">
+              <p className="text-green-400 text-sm font-bold">🎁 15 dias grátis</p>
+              <p className="text-[10px] text-gray-400">Só paga depois · cancele quando quiser</p>
+            </div>
+
             <Link
               href="/checkout"
               className="block text-center bg-[#1B6EF3] hover:bg-blue-600 text-white font-bold rounded-xl py-3 transition-colors"
             >
-              Assinar Premium
+              Começar 15 dias grátis
             </Link>
 
             <p className="text-center text-xs text-gray-600 mt-3">
