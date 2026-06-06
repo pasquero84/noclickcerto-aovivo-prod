@@ -1,10 +1,12 @@
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
+import { isAdmin } from '@/lib/admin'
 import Link from 'next/link'
 import NavbarClient from './NavbarClient'
 
 export default async function Navbar() {
   const session = await getServerSession(authOptions)
+  const admin = isAdmin(session?.user?.email)
 
   return (
     <nav className="relative bg-[#060d1e] border-b border-white/8 h-14 flex items-center px-4 md:px-6 sticky top-0 z-50">
@@ -30,6 +32,11 @@ export default async function Navbar() {
         <Link href="/sobre" className="text-[11px] font-bold text-gray-400 hover:text-white px-3 py-1 tracking-widest transition-colors">
           SOBRE
         </Link>
+        {admin && (
+          <Link href="/admin" className="text-[11px] font-black text-yellow-400 hover:text-yellow-300 px-3 py-1 tracking-widest transition-colors">
+            ADMIN
+          </Link>
+        )}
       </div>
 
       {/* Auth — desktop */}
