@@ -1,12 +1,17 @@
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
+import { isUserPro } from '@/lib/admin'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import SignOutButton from './SignOutButton'
 
+export const dynamic = 'force-dynamic'
+
 export default async function MinhaContaPage() {
   const session = await getServerSession(authOptions)
   if (!session) redirect('/auth/login')
+
+  const pro = await isUserPro(session.user?.email)
 
   const initials = session.user?.name
     ? session.user.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()
@@ -49,19 +54,25 @@ export default async function MinhaContaPage() {
         </div>
 
         {/* Plano atual */}
-        <div className="bg-[#0D1526] rounded-2xl p-6 border border-white/5 mb-6">
+        <div className={`rounded-2xl p-6 border mb-6 ${pro ? 'bg-green-500/10 border-green-500/30' : 'bg-[#0D1526] border-white/5'}`}>
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-400 mb-1">Plano atual</p>
-              <p className="text-xl font-bold">Gratuito</p>
-              <p className="text-sm text-gray-500 mt-1">Câmeras em 720p · Atualização a cada 30s</p>
+              <p className="text-xl font-bold flex items-center gap-2">
+                {pro ? <>Premium <span className="text-[10px] bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full">ATIVO</span></> : 'Gratuito'}
+              </p>
+              <p className="text-sm text-gray-500 mt-1">
+                {pro ? 'Acesso completo a todas as câmeras ao vivo de Ubatuba' : 'Câmeras em 720p · Atualização a cada 30s'}
+              </p>
             </div>
-            <Link
-              href="/premium"
-              className="bg-[#1B6EF3] hover:bg-blue-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
-            >
-              Upgrade Premium
-            </Link>
+            {!pro && (
+              <Link
+                href="/checkout"
+                className="bg-[#1B6EF3] hover:bg-blue-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors whitespace-nowrap"
+              >
+                Upgrade Premium
+              </Link>
+            )}
           </div>
         </div>
 

@@ -1,4 +1,5 @@
 // Helpers de administração via REST API do Supabase (funciona em produção).
+import { findUserByEmail } from './users-rest'
 
 const BASE = process.env.NEXT_PUBLIC_SUPABASE_URL
 const KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -13,6 +14,21 @@ const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ||
 
 export function isAdmin(email?: string | null): boolean {
   return !!email && ADMIN_EMAILS.includes(email.toLowerCase())
+}
+
+// Usuário tem assinatura PRO ativa (paga ou cortesia)?
+export async function isUserPro(email?: string | null): Promise<boolean> {
+  if (!BASE || !KEY || !email) return false
+  const user = await findUserByEmail(email)
+  if (!user) return false
+  const res = await fetch(
+    `${BASE}/rest/v1/subscriptions?user_id=eq.${user.id}&status=eq.active&select=current_period_end`,
+    { headers: headers(), cache: 'no-store' },
+  )
+  if (!res.ok) return false
+  const rows = (await res.json()) as { current_period_end: string }[]
+  const now = Date.now()
+  return Array.isArray(rows) && rows.some(r => new Date(r.current_period_end).getTime() > now)
 }
 
 function headers(extra?: Record<string, string>) {
