@@ -26,7 +26,7 @@ function getCameraImage(name: string): string {
 const PRAIA_GRANDE = '-_iOULj_d7Q'
 function getYoutubeId(name: string): string {
   const n = name.toUpperCase()
-  if (n.includes('ITAMAMBUCA')) return '4K4TEa1Q2H4'
+  if (n.includes('ITAMAMBUCA')) return 'D4NVwiKAYZo'
   if (n.includes('TONINHAS')) return 'PUcA3w2Bl0c'
   return PRAIA_GRANDE
 }

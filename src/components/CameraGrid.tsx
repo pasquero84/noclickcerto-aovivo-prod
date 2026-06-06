@@ -35,7 +35,7 @@ function getCameraImage(cameraName: string): string {
 const PRAIA_GRANDE = '-_iOULj_d7Q'
 function getYoutubeId(cameraName: string): string {
   const n = cameraName.toUpperCase()
-  if (n.includes('ITAMAMBUCA')) return '4K4TEa1Q2H4'
+  if (n.includes('ITAMAMBUCA')) return 'D4NVwiKAYZo'
   if (n.includes('TONINHAS')) return 'PUcA3w2Bl0c'
   if (n.includes('PRAIA GRANDE')) return PRAIA_GRANDE
   // Vermelha / Perequê / Preferida — provisório até receber o link ao vivo
