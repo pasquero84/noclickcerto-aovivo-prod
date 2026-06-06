@@ -30,7 +30,7 @@ export default function NavbarClient({ session }: { session: Session | null }) {
         ENTRAR
       </Link>
       <Link
-        href="/auth/cadastro"
+        href="/checkout"
         className="text-[11px] font-black bg-[#1B6EF3] hover:bg-blue-500 text-white px-4 py-1.5 rounded tracking-widest transition-colors"
       >
         ASSINAR AGORA

@@ -19,13 +19,16 @@ export default async function Navbar() {
         <span className="bg-[#1B6EF3] text-white text-[9px] font-black px-1.5 py-0.5 rounded tracking-widest">AO VIVO</span>
       </Link>
 
-      {/* Aba única: AO VIVO */}
-      <div className="hidden md:flex items-center flex-1">
-        <Link
-          href="/"
-          className="text-[11px] font-bold text-white border-b-2 border-[#1B6EF3] px-3 py-[18px] tracking-widest"
-        >
+      {/* Abas */}
+      <div className="hidden md:flex items-center flex-1 gap-1">
+        <Link href="/" className="text-[11px] font-bold text-white hover:text-[#1B6EF3] px-3 py-1 tracking-widest transition-colors">
           AO VIVO
+        </Link>
+        <Link href="/premium" className="text-[11px] font-bold text-gray-400 hover:text-white px-3 py-1 tracking-widest transition-colors">
+          PREMIUM
+        </Link>
+        <Link href="/sobre" className="text-[11px] font-bold text-gray-400 hover:text-white px-3 py-1 tracking-widest transition-colors">
+          SOBRE
         </Link>
       </div>
 
@@ -43,7 +46,7 @@ export default async function Navbar() {
           ENTRAR
         </Link>
         <Link
-          href="/auth/cadastro"
+          href="/checkout"
           className="text-[10px] bg-[#1B6EF3] text-white font-black px-3 py-1.5 rounded tracking-wider"
         >
           ASSINAR

@@ -101,14 +101,14 @@ export default function PremiumPage() {
             </ul>
 
             <Link
-              href="/auth/cadastro"
+              href="/checkout"
               className="block text-center bg-[#1B6EF3] hover:bg-blue-600 text-white font-bold rounded-xl py-3 transition-colors"
             >
               Assinar Premium
             </Link>
 
             <p className="text-center text-xs text-gray-600 mt-3">
-              Cancele quando quiser · Pagamento via PIX ou cartão
+              Cancele quando quiser · PIX, cartão, Apple Pay e Google Pay
             </p>
           </div>
         </div>

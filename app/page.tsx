@@ -113,7 +113,7 @@ export default async function Home() {
             </div>
 
             <Link
-              href="/premium"
+              href="/checkout"
               className="block text-center bg-[#1B6EF3] hover:bg-blue-500 text-white font-black py-2.5 rounded-xl text-xs tracking-widest transition-colors"
             >
               ASSINAR AGORA
