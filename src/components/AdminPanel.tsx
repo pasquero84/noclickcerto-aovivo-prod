@@ -95,8 +95,7 @@ export default function AdminPanel({ initialUsers }: { initialUsers: AdminUser[]
       </div>
 
       <p className="text-[11px] text-gray-600 mt-4">
-        "Liberar PRO" dá acesso premium vitalício (cortesia) ao usuário. Quando a cobrança automática
-        estiver ligada, as assinaturas pagas aparecem aqui também.
+        {'"Liberar PRO" dá acesso premium vitalício (cortesia) ao usuário. Quando a cobrança automática estiver ligada, as assinaturas pagas aparecem aqui também.'}
       </p>
     </div>
   )
