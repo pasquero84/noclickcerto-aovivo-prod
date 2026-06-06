@@ -6,6 +6,11 @@ export const metadata: Metadata = {
   title: 'NoClickCerto Ao Vivo',
   description: 'Câmeras ao vivo de Ubatuba - NoClickCerto',
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'),
+  icons: {
+    icon: '/favicon.svg',
+    shortcut: '/favicon.svg',
+    apple: '/favicon.svg',
+  },
   openGraph: {
     title: 'NoClickCerto Ao Vivo',
     description: 'Câmeras ao vivo de Ubatuba',

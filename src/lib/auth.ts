@@ -2,9 +2,7 @@ import type { NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import GoogleProvider from 'next-auth/providers/google'
 import bcrypt from 'bcryptjs'
-import { db } from '@/lib/db'
-import { users } from '@/lib/db/schema'
-import { eq } from 'drizzle-orm'
+import { findUserByEmail } from '@/lib/users-rest'
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -21,15 +19,10 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null
         try {
-          const result = await db
-            .select()
-            .from(users)
-            .where(eq(users.email, credentials.email))
-            .limit(1)
-          const user = result[0]
-          if (!user || !user.passwordHash) return null
+          const user = await findUserByEmail(credentials.email)
+          if (!user || !user.password_hash) return null
           if (user.status !== 'active') return null
-          const valid = await bcrypt.compare(credentials.password, user.passwordHash)
+          const valid = await bcrypt.compare(credentials.password, user.password_hash)
           if (!valid) return null
           return { id: user.id, email: user.email, name: user.name, image: user.image }
         } catch {
