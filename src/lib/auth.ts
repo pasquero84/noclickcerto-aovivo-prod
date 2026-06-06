@@ -49,24 +49,39 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async signIn({ user, account }) {
-      if (account?.provider === 'google') {
+      // Salva/atualiza o usuário do Google via REST API do Supabase (IPv4,
+      // funciona em produção). Best-effort: NUNCA bloqueia o login se falhar.
+      if (account?.provider === 'google' && user.email) {
         try {
-          const existing = await db
-            .select({ id: users.id })
-            .from(users)
-            .where(eq(users.email, user.email!))
-            .limit(1)
-          if (existing.length === 0) {
-            await db.insert(users).values({
-              email: user.email!,
-              name: user.name || 'Usuário',
-              image: user.image,
-              status: 'active',
-              emailVerifiedAt: new Date(),
-            })
+          const base = process.env.NEXT_PUBLIC_SUPABASE_URL
+          const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+          if (base && key) {
+            const headers = { apikey: key, Authorization: `Bearer ${key}` }
+            const check = await fetch(
+              `${base}/rest/v1/users?email=eq.${encodeURIComponent(user.email)}&select=id`,
+              { headers },
+            )
+            const rows = await check.json()
+            if (Array.isArray(rows) && rows.length === 0) {
+              await fetch(`${base}/rest/v1/users`, {
+                method: 'POST',
+                headers: {
+                  ...headers,
+                  'Content-Type': 'application/json',
+                  Prefer: 'return=minimal',
+                },
+                body: JSON.stringify({
+                  email: user.email,
+                  name: user.name || 'Usuário',
+                  image: user.image || null,
+                  status: 'active',
+                  email_verified_at: new Date().toISOString(),
+                }),
+              })
+            }
           }
         } catch {
-          return false
+          // não bloqueia o login se o salvamento falhar
         }
       }
       return true
