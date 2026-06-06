@@ -16,7 +16,7 @@ type Beach = {
   cameras: Camera[]
 }
 
-// Imagem (poster) de cada câmera — câmeras WavesNow de Ubatuba (provisório)
+// Imagem (thumbnail) de cada câmera — prints WavesNow de Ubatuba
 function getCameraImage(cameraName: string): string {
   const n = cameraName.toUpperCase()
   if (n.includes('ITAMAMBUCA')) return '/cameras/itamambuca.png'
@@ -28,16 +28,22 @@ function getCameraImage(cameraName: string): string {
   return '/cameras/itamambuca.png'
 }
 
-// Vídeo (feed) — vídeos públicos de Ubatuba do WavesNow, hospedados localmente.
-// Alterna entre os 2 disponíveis para dar variedade enquanto as câmeras
-// próprias não são instaladas.
-const VIDEOS = ['/cameras/ubatuba-1.mp4', '/cameras/ubatuba-2.mp4']
-function getCameraVideo(index: number): string {
-  return VIDEOS[index % VIDEOS.length]
+// Stream ao vivo no YouTube — câmeras do WavesNow de Ubatuba (uso provisório
+// autorizado, até as câmeras próprias serem instaladas).
+// IDs confirmados: Itamambuca, Praia Grande, Toninhas.
+// Os demais usam Praia Grande provisoriamente até receber o link ao vivo certo.
+const PRAIA_GRANDE = '-_iOULj_d7Q'
+function getYoutubeId(cameraName: string): string {
+  const n = cameraName.toUpperCase()
+  if (n.includes('ITAMAMBUCA')) return '4K4TEa1Q2H4'
+  if (n.includes('TONINHAS')) return 'PUcA3w2Bl0c'
+  if (n.includes('PRAIA GRANDE')) return PRAIA_GRANDE
+  // Vermelha / Perequê / Preferida — provisório até receber o link ao vivo
+  return PRAIA_GRANDE
 }
 
 export default function CameraGrid({ beaches }: { beaches: Beach[] }) {
-  const [selected, setSelected] = useState<{ camera: Camera; image: string; video: string } | null>(null)
+  const [selected, setSelected] = useState<{ camera: Camera; youtubeId: string } | null>(null)
 
   // Fechar modal com Esc + travar scroll do body
   useEffect(() => {
@@ -52,9 +58,6 @@ export default function CameraGrid({ beaches }: { beaches: Beach[] }) {
       document.body.style.overflow = ''
     }
   }, [selected])
-
-  // índice global para alternar vídeos entre todas as câmeras
-  let cameraIndex = -1
 
   return (
     <>
@@ -83,27 +86,21 @@ export default function CameraGrid({ beaches }: { beaches: Beach[] }) {
                   <p className="text-sm">Câmera em breve</p>
                 </div>
               ) : (
-                beach.cameras.map(camera => {
-                  cameraIndex += 1
-                  const image = getCameraImage(camera.name)
-                  const video = getCameraVideo(cameraIndex)
-                  return (
-                    <CameraCard
-                      key={camera.id}
-                      camera={camera}
-                      image={image}
-                      video={video}
-                      onOpen={() => setSelected({ camera, image, video })}
-                    />
-                  )
-                })
+                beach.cameras.map(camera => (
+                  <CameraCard
+                    key={camera.id}
+                    camera={camera}
+                    image={getCameraImage(camera.name)}
+                    onOpen={() => setSelected({ camera, youtubeId: getYoutubeId(camera.name) })}
+                  />
+                ))
               )}
             </div>
           </div>
         ))}
       </div>
 
-      {/* Modal — câmera ao vivo em tamanho grande */}
+      {/* Modal — câmera ao vivo (YouTube) em tamanho grande */}
       {selected && (
         <div
           className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm"
@@ -122,23 +119,15 @@ export default function CameraGrid({ beaches }: { beaches: Beach[] }) {
             </button>
 
             <div className="bg-[#0D1526] rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
-              {/* Vídeo grande */}
-              <div className="relative bg-black">
-                <video
-                  src={selected.video}
-                  poster={selected.image}
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  controls
-                  className="w-full max-h-[75vh] object-contain bg-black"
+              {/* Player ao vivo */}
+              <div className="relative bg-black aspect-video">
+                <iframe
+                  className="absolute inset-0 w-full h-full"
+                  src={`https://www.youtube.com/embed/${selected.youtubeId}?autoplay=1&mute=1&playsinline=1&rel=0&modestbranding=1`}
+                  title={selected.camera.name}
+                  allow="autoplay; encrypted-media; picture-in-picture"
+                  allowFullScreen
                 />
-                {/* Badge AO VIVO */}
-                <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-red-600 text-white px-2.5 py-1 rounded text-[11px] font-black tracking-wider">
-                  <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
-                  AO VIVO
-                </div>
               </div>
 
               {/* Rodapé */}
@@ -149,8 +138,9 @@ export default function CameraGrid({ beaches }: { beaches: Beach[] }) {
                     <p className="text-sm text-gray-500 mt-0.5">{selected.camera.description}</p>
                   )}
                 </div>
-                <span className="text-[10px] text-gray-500 bg-white/5 px-2.5 py-1 rounded-full whitespace-nowrap">
-                  720p · ao vivo
+                <span className="flex items-center gap-1.5 text-[11px] font-black text-white bg-red-600 px-2.5 py-1 rounded whitespace-nowrap">
+                  <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
+                  AO VIVO
                 </span>
               </div>
             </div>
@@ -164,12 +154,10 @@ export default function CameraGrid({ beaches }: { beaches: Beach[] }) {
 function CameraCard({
   camera,
   image,
-  video,
   onOpen,
 }: {
   camera: Camera
   image: string
-  video: string
   onOpen: () => void
 }) {
   return (
@@ -177,18 +165,10 @@ function CameraCard({
       onClick={onOpen}
       className="bg-[#060A14] rounded-xl border border-white/5 overflow-hidden group cursor-pointer transition-all hover:border-[#1B6EF3]/40 hover:scale-[1.02]"
     >
-      {/* Feed da câmera (vídeo em loop) */}
+      {/* Thumbnail da câmera */}
       <div className="aspect-video relative bg-black overflow-hidden">
-        <video
-          src={video}
-          poster={image}
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="metadata"
-          className="w-full h-full object-cover"
-        />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={image} alt={camera.name} className="w-full h-full object-cover" />
 
         {/* Badge AO VIVO (estilo WavesNow) */}
         <div className="absolute top-2 left-2 flex items-center gap-1 bg-red-600 text-white px-1.5 py-[3px] rounded-sm text-[9px] font-black tracking-wider z-10">
@@ -196,13 +176,12 @@ function CameraCard({
           AO VIVO
         </div>
 
-        {/* Overlay "Ampliar" no hover */}
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center z-10">
-          <span className="opacity-0 group-hover:opacity-100 transition-opacity text-white text-xs font-semibold bg-black/50 px-3 py-1.5 rounded-full flex items-center gap-1.5">
-            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
+        {/* Overlay play/ampliar no hover */}
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center z-10">
+          <span className="w-12 h-12 rounded-full bg-white/15 group-hover:bg-[#1B6EF3] backdrop-blur flex items-center justify-center transition-all scale-90 group-hover:scale-100">
+            <svg className="w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z" />
             </svg>
-            Ampliar
           </span>
         </div>
       </div>
