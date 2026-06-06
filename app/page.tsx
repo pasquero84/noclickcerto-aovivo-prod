@@ -1,8 +1,11 @@
 import Link from 'next/link'
+import { getServerSession } from 'next-auth'
 import Navbar from '@/components/Navbar'
 import HomeCameras, { type FlatCamera } from '@/components/HomeCameras'
 import { getBeachesWithCameras } from '@/lib/cameras'
 import { getConditions } from '@/lib/conditions'
+import { authOptions } from '@/lib/auth'
+import { listFavoriteCameraIds } from '@/lib/favorites'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 60
@@ -19,7 +22,12 @@ const PREMIUM_FEATURES = [
 const VIEWERS = [137, 95, 115, 52, 78, 45, 61, 33]
 
 export default async function Home() {
-  const [beaches, cond] = await Promise.all([getBeachesWithCameras(), getConditions()])
+  const session = await getServerSession(authOptions)
+  const [beaches, cond, favoriteIds] = await Promise.all([
+    getBeachesWithCameras(),
+    getConditions(),
+    listFavoriteCameraIds(session?.user?.email),
+  ])
 
   const CONDITIONS = cond
     ? [
@@ -143,7 +151,7 @@ export default async function Home() {
             </div>
           </div>
 
-          <HomeCameras cameras={cameras} />
+          <HomeCameras cameras={cameras} favoriteIds={favoriteIds} loggedIn={!!session} />
         </section>
 
         {/* Sidebar — Condições Atuais (sem boletim) */}
