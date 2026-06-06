@@ -2,16 +2,10 @@ import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import HomeCameras, { type FlatCamera } from '@/components/HomeCameras'
 import { getBeachesWithCameras } from '@/lib/cameras'
+import { getConditions } from '@/lib/conditions'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 60
-
-const CONDITIONS = [
-  { icon: '🌊', label: 'Ondas', value: '0.6–1.0m' },
-  { icon: '⏱', label: 'Período', value: '8s' },
-  { icon: '💨', label: 'Vento', value: 'NE 13km' },
-  { icon: '🔁', label: 'Maré', value: 'Enchendo' },
-]
 
 const PREMIUM_FEATURES = [
   'Todas as câmeras ao vivo',
@@ -25,7 +19,21 @@ const PREMIUM_FEATURES = [
 const VIEWERS = [137, 95, 115, 52, 78, 45, 61, 33]
 
 export default async function Home() {
-  const beaches = await getBeachesWithCameras()
+  const [beaches, cond] = await Promise.all([getBeachesWithCameras(), getConditions()])
+
+  const CONDITIONS = cond
+    ? [
+        { icon: '🌊', label: 'Ondas', value: `${cond.waveHeight}m` },
+        { icon: '⏱', label: 'Período', value: `${cond.wavePeriod}s` },
+        { icon: '💨', label: 'Vento', value: `${cond.windDir} ${cond.windSpeed}km` },
+        { icon: '🔁', label: 'Maré', value: cond.tide },
+      ]
+    : [
+        { icon: '🌊', label: 'Ondas', value: '—' },
+        { icon: '⏱', label: 'Período', value: '—' },
+        { icon: '💨', label: 'Vento', value: '—' },
+        { icon: '🔁', label: 'Maré', value: '—' },
+      ]
 
   // achatar câmeras em lista única (estilo mockup)
   const cameras: FlatCamera[] = []
@@ -154,7 +162,7 @@ export default async function Home() {
                   </div>
                 ))}
               </div>
-              <p className="text-[8px] text-gray-700 mt-3 text-center">Dados atualizados há 10 min</p>
+              <p className="text-[8px] text-gray-700 mt-3 text-center">Dados em tempo real · Ubatuba</p>
             </div>
           </div>
 
